@@ -1,5 +1,7 @@
 # Java Spring-boot application using Redis as a caching database
 
+### [Running Application](https://spring-boot-redis-caching.herokuapp.com/swagger-ui.html)
+
 ## Entities involved
 * Two main entities are involved
   * MasterHouse (master_houses)
