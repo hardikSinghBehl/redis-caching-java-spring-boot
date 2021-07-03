@@ -39,6 +39,9 @@ public class Wizard implements Serializable {
 	@Column(name = "last_name", nullable = true)
 	private String lastName;
 
+	@Column(name = "gender", nullable = false)
+	private String gender;
+
 	@Column(name = "house_id", nullable = false)
 	private UUID houseId;
 
