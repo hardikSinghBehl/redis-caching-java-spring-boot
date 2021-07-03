@@ -6,6 +6,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,5 +54,13 @@ public class WizardController {
 	public ResponseEntity<?> wizardRetrievalRequestHandler(
 			@PathVariable(name = "wizardId", required = true) final UUID wizardId) {
 		return wizardService.retreiveById(wizardId);
+	}
+
+	@DeleteMapping(value = "/{wizardId}")
+	@ResponseStatus(value = HttpStatus.OK)
+	@Operation(summary = "Deletes a wizard record in the system")
+	public ResponseEntity<?> wizardDeletionHandler(
+			@PathVariable(name = "wizardId", required = true) final UUID wizardId) {
+		return wizardService.delete(wizardId);
 	}
 }

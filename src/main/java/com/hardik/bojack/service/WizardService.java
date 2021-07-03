@@ -71,4 +71,9 @@ public class WizardService {
 		return ResponseEntity.ok(wizard);
 	}
 
+	public ResponseEntity<?> delete(final UUID wizardId) {
+		wizardRepository.deleteById(wizardId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
 }
