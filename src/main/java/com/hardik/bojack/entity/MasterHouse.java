@@ -54,8 +54,4 @@ public class MasterHouse implements Serializable {
 		this.updatedAt = LocalDateTime.now();
 	}
 
-	public static void main(String[] args) {
-		System.out.println("20210703081116242".length());
-	}
-
 }
