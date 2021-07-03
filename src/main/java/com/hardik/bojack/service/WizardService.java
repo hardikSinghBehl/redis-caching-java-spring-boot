@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +40,8 @@ public class WizardService {
 		return savedWizard.getId();
 	}
 
-	@Caching(evict = { @CacheEvict(value = "wizards", allEntries = true) })
+	@Caching(evict = { @CacheEvict(value = "wizards", allEntries = true) }, put = {
+			@CachePut(value = "wizard", key = "#wizardId") })
 	public UUID update(final UUID wizardId, final WizardCreationRequestDto wizardCreationRequestDto)
 			throws JSONException {
 
@@ -57,6 +60,7 @@ public class WizardService {
 		return updatedWizard.getId();
 	}
 
+	@Cacheable(value = "wizard", key = "#wizardId")
 	public WizardDto retreiveById(final UUID wizardId) {
 
 		final var wizard = wizardRepository.findById(wizardId);
@@ -71,7 +75,8 @@ public class WizardService {
 				.lastName(retreivedWizard.getLastName()).build();
 	}
 
-	@Caching(evict = { @CacheEvict(value = "wizards", allEntries = true) })
+	@Caching(evict = { @CacheEvict(value = "wizard", key = "#wizardId"),
+			@CacheEvict(value = "wizards", allEntries = true) })
 	public void delete(final UUID wizardId) {
 		wizardRepository.deleteById(wizardId);
 	}
