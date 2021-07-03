@@ -3,12 +3,12 @@ package com.hardik.bojack.service;
 import java.util.UUID;
 
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.hardik.bojack.dto.WizardCreationRequestDto;
+import com.hardik.bojack.dto.WizardDto;
 import com.hardik.bojack.entity.Wizard;
 import com.hardik.bojack.repository.WizardRepository;
 
@@ -20,7 +20,8 @@ public class WizardService {
 
 	private final WizardRepository wizardRepository;
 
-	public ResponseEntity<?> create(final WizardCreationRequestDto wizardCreationRequestDto) throws JSONException {
+	@Caching(evict = { @CacheEvict(value = "wizards", allEntries = true) })
+	public UUID create(final WizardCreationRequestDto wizardCreationRequestDto) throws JSONException {
 
 		final var wizard = new Wizard();
 		wizard.setFirstName(wizardCreationRequestDto.getFirstName());
@@ -32,15 +33,13 @@ public class WizardService {
 		final var savedWizard = wizardRepository.save(wizard);
 
 		if (savedWizard == null)
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			throw new RuntimeException("Invalid Wizard id");
 
-		final var response = new JSONObject();
-		response.put("Wizard-ID", savedWizard.getId().toString());
-
-		return ResponseEntity.ok(response.toString());
+		return savedWizard.getId();
 	}
 
-	public ResponseEntity<?> update(final UUID wizardId, final WizardCreationRequestDto wizardCreationRequestDto)
+	@Caching(evict = { @CacheEvict(value = "wizards", allEntries = true) })
+	public UUID update(final UUID wizardId, final WizardCreationRequestDto wizardCreationRequestDto)
 			throws JSONException {
 
 		final var wizard = wizardRepository.findById(wizardId).get();
@@ -53,27 +52,28 @@ public class WizardService {
 		final var updatedWizard = wizardRepository.save(wizard);
 
 		if (updatedWizard == null)
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			throw new RuntimeException("Invalid Wizard id");
 
-		final var response = new JSONObject();
-		response.put("Wizard-ID", updatedWizard.getId().toString());
-
-		return ResponseEntity.ok(response.toString());
+		return updatedWizard.getId();
 	}
 
-	public ResponseEntity<?> retreiveById(final UUID wizardId) {
+	public WizardDto retreiveById(final UUID wizardId) {
 
 		final var wizard = wizardRepository.findById(wizardId);
 
 		if (wizard.isEmpty())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			throw new RuntimeException("Invalid Wizard id");
 
-		return ResponseEntity.ok(wizard);
+		final var retreivedWizard = wizard.get();
+		return WizardDto.builder().createdAt(retreivedWizard.getCreatedAt()).firstName(retreivedWizard.getFirstName())
+				.gender(retreivedWizard.getGender()).houseId(retreivedWizard.getHouseId()).id(retreivedWizard.getId())
+				.updatedAt(retreivedWizard.getUpdatedAt()).middleName(retreivedWizard.getMiddleName())
+				.lastName(retreivedWizard.getLastName()).build();
 	}
 
-	public ResponseEntity<?> delete(final UUID wizardId) {
+	@Caching(evict = { @CacheEvict(value = "wizards", allEntries = true) })
+	public void delete(final UUID wizardId) {
 		wizardRepository.deleteById(wizardId);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 }

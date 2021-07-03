@@ -3,6 +3,7 @@ package com.hardik.bojack.controller;
 import java.util.UUID;
 
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hardik.bojack.dto.WizardCreationRequestDto;
+import com.hardik.bojack.dto.WizardDto;
 import com.hardik.bojack.service.WizardService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +37,10 @@ public class WizardController {
 	public ResponseEntity<?> wizardCreationRequestHandler(
 			@RequestBody(required = true) final WizardCreationRequestDto wizardCreationRequestDto)
 			throws JSONException {
-		return wizardService.create(wizardCreationRequestDto);
+		final var response = new JSONObject();
+		response.put("Wizard-ID", wizardService.create(wizardCreationRequestDto));
+		return ResponseEntity.ok(response.toString());
+
 	}
 
 	@PutMapping(value = "/{wizardId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,15 +50,17 @@ public class WizardController {
 			@PathVariable(name = "wizardId", required = true) final UUID wizardId,
 			@RequestBody(required = true) final WizardCreationRequestDto wizardCreationRequestDto)
 			throws JSONException {
-		return wizardService.update(wizardId, wizardCreationRequestDto);
+		final var response = new JSONObject();
+		response.put("Wizard-ID", wizardService.update(wizardId, wizardCreationRequestDto));
+		return ResponseEntity.ok(response.toString());
 	}
 
 	@GetMapping(value = "/{wizardId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.OK)
 	@Operation(summary = "Returns a wizard record in the system")
-	public ResponseEntity<?> wizardRetrievalRequestHandler(
+	public ResponseEntity<WizardDto> wizardRetrievalRequestHandler(
 			@PathVariable(name = "wizardId", required = true) final UUID wizardId) {
-		return wizardService.retreiveById(wizardId);
+		return ResponseEntity.ok(wizardService.retreiveById(wizardId));
 	}
 
 	@DeleteMapping(value = "/{wizardId}")
@@ -61,6 +68,7 @@ public class WizardController {
 	@Operation(summary = "Deletes a wizard record in the system")
 	public ResponseEntity<?> wizardDeletionHandler(
 			@PathVariable(name = "wizardId", required = true) final UUID wizardId) {
-		return wizardService.delete(wizardId);
+		wizardService.delete(wizardId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

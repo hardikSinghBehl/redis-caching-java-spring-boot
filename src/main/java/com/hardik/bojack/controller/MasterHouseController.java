@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hardik.bojack.entity.MasterHouse;
-import com.hardik.bojack.entity.Wizard;
-import com.hardik.bojack.repository.MasterHouseRepository;
+import com.hardik.bojack.dto.HouseDto;
+import com.hardik.bojack.dto.WizardDto;
+import com.hardik.bojack.service.MasterHouseService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
@@ -24,21 +24,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class MasterHouseController {
 
-	private final MasterHouseRepository masterHouseRepository;
+	private final MasterHouseService masterHouseService;
 
 	@GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.OK)
 	@Operation(summary = "Returns list of houses")
-	public ResponseEntity<List<MasterHouse>> masterHouseListRetreivalHandler() {
-		return ResponseEntity.ok(masterHouseRepository.findAll());
+	public ResponseEntity<List<HouseDto>> masterHouseListRetreivalHandler() {
+		return ResponseEntity.ok(masterHouseService.retreiveAll());
 	}
 
 	@GetMapping(value = "/{houseId}/wizards/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.OK)
 	@Operation(summary = "Returns list of wizards of provided house-id")
-	public ResponseEntity<List<Wizard>> wizardsByHouseRetreivalHandler(
+	public ResponseEntity<List<WizardDto>> wizardsByHouseRetreivalHandler(
 			@PathVariable(name = "houseId", required = true) final UUID houseId) {
-		final var house = masterHouseRepository.findById(houseId).get();
-		return ResponseEntity.ok(house.getWizards());
+		return ResponseEntity.ok(masterHouseService.retreiveWizardsByHouseId(houseId));
 	}
 }

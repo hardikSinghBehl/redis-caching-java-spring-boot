@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 @EnableConfigurationProperties(RedisConfiguration.class)
 public class RedisTemplateBean {
 
-	private final RedisConfiguration redisConfiguration;
 	private final JedisConnectionFactory jedisConnectionFactory;
 
 	@Bean
