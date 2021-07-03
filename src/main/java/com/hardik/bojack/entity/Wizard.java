@@ -16,7 +16,11 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Data;
+import lombok.EqualsAndHashCode.Exclude;
 
 @Data
 @Entity
@@ -45,6 +49,9 @@ public class Wizard implements Serializable {
 	@Column(name = "house_id", nullable = false)
 	private UUID houseId;
 
+	@Hidden
+	@Exclude
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "house_id", nullable = false, insertable = false, updatable = false)
 	private MasterHouse masterHouse;
