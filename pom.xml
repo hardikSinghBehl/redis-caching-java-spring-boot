@@ -15,7 +15,7 @@
 	<name>redis-caching-spring-boot</name>
 	<description>Spring boot application using redis as a caching system</description>
 	<properties>
-		<java.version>16</java.version>
+		<java.version>15</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
