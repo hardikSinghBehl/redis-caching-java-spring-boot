@@ -7,7 +7,11 @@
   * MasterHouse (master_houses)
   * Wizard (wizards)
 * Wizards have a many-to-one relationship with MasterHouse
-* Example: Harry Potter (wizard) belongs to Gryffindor (masterHouse)
+* Example:
+  *  Harry Potter (wizard) belongs to Gryffindor (masterHouse)
+  *  Ron Weasley (wizard) belongs to Gryffindor (masterHouse)
+  *  Hermione Granger (wizard) belongs to Gryffindor (masterHouse)
+  *  Griffindor (masterHouse) has Harry Potter, Ron Weasly and Hermione Granger (wizards)
 
 ## Caching Flow
 * The house id is used as the key and the list of wizards belonging to that particular house are kept as the value in redis DB (key-value store)
