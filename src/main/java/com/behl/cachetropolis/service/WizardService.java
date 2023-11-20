@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class WizardService {
 
 	private final ModelMapper modelMapper;
-	private final CacheManager cacheManager;
+	private final CacheManager listCacheManager;
 	private final WizardRepository wizardRepository;
 
 	@CacheEvict(value = "wizards", key = "#wizardCreationRequest.houseId")
@@ -52,7 +52,7 @@ public class WizardService {
 		modelMapper.map(WizardUpdationRequest, wizard);
 		
 		final var updatedWizard = wizardRepository.save(wizard);
-		cacheManager.getCache("wizards").evict(wizard.getHouseId());;
+		listCacheManager.getCache("wizards").evict(wizard.getHouseId());;
 		return modelMapper.map(updatedWizard, WizardDto.class);
 	}
 
@@ -66,7 +66,7 @@ public class WizardService {
 	public void delete(@NonNull final UUID wizardId) {
 		final var wizard = getWizardById(wizardId);
 		wizardRepository.deleteById(wizardId);
-		cacheManager.getCache("wizards").evict(wizard.getHouseId());;
+		listCacheManager.getCache("wizards").evict(wizard.getHouseId());;
 	}
 	
 	private Wizard getWizardById(@NonNull final UUID wizardId) {
