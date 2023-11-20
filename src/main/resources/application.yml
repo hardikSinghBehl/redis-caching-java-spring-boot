@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ${REDIS_HOSTNAME}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+      
+com:
+  behl:
+    cachetropolis:
+      open-api:
+        version: 1.0.0
+        title: Cachetropolis
+        description: Backend application leveraging caching mechanism to reduce datasource trips
