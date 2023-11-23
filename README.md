@@ -1,96 +1,43 @@
-# Java Spring-boot application using Redis as a caching database
+## Redis Powered Caching in Java Spring Boot
+##### A reference proof-of-concept that leverages caching to reduce network calls and improve latency.
 
-### [Running Application](https://spring-boot-redis-caching.herokuapp.com/swagger-ui.html)
+---
 
-## Entities involved
-* Two main entities are involved
-  * MasterHouse (master_houses)
-  * Wizard (wizards)
-* Wizards have a many-to-one relationship with MasterHouse
-* Example:
-  *  Harry Potter (wizard) belongs to Gryffindor (masterHouse)
-  *  Ron Weasley (wizard) belongs to Gryffindor (masterHouse)
-  *  Hermione Granger (wizard) belongs to Gryffindor (masterHouse)
-  *  Griffindor (masterHouse) has Harry Potter, Ron Weasly and Hermione Granger (wizards)
+### Overview
 
-## Caching Flow
-* The house id is used as the key and the list of wizards belonging to that particular house are kept as the value in redis DB (key-value store)
-* The key is removed from the cache when a new wizard is added/updated/removed to/from that house
-* When the API is hit again, the updated list value is added to the cache and the process is repeated
-* Addition to that the API to retreive wizard by #id is also cached and goes through the above mentioned process as well where the wizard's pkey is used as a key to store the corresponding DTO value
+* Database tables and their corresponding initial data are established using [Flyway migration scripts](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/tree/main/src/main/resources/db/migration).
+* The application primarily revolves around the below database entities
+  * master_houses
+  * wizards
+* The `wizards` entity has a Many-to-One relationship with `master_houses`. This [database diagram](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/blob/main/docs/database_diagram.png) can be referenced for more information. 
+* The responsibility of connecting to the provisioned cache instance as configured in the `application.yml` file is managed by [RedisConfiguration.java](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/blob/main/src/main/java/com/behl/cachetropolis/configuration/RedisConfiguration.java).
+* The [service layer](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/tree/main/src/main/java/com/behl/cachetropolis/service) of the application caches the list of wizards corresponding to a particular house where house ID is kept as the cache key. The stored key is removed from the cache when any wizard record is added, updated, or removed from that particular house to maintain strong read consistency.
+* The above approach is followed for individual wizard records as well, utilizing the wizard ID as the cache key.
 
-## Main classes/files
-* Service classes where caching is used
-  * [MasterHouseService](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/blob/main/src/main/java/com/hardik/bojack/service/MasterHouseService.java)
-  * [WizardService](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/blob/main/src/main/java/com/hardik/bojack/service/WizardService.java)
-* .sql migration files
-  * [Flyway scripts](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/tree/main/src/main/resources/db/migration)
-* Redis config classes
-  * [Link](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/tree/main/src/main/java/com/hardik/bojack/configuration)
+### Testing
 
-## Technologies used
-* Java-15
-* Spring-boot
-* PostgreSQL
-* Flyway
-* Redis
-* Open-API(Swagger)
-* Lombok
+Testcontainers have been leveraged to test the caching mechanism within the application. Scenarios of cache hit, cache invalidation, cache updation and data consistency has been tested in the service layer test classes listed below:
 
-## Setup Locally Without Docker
+* [WizardServiceTest.java](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/blob/main/src/test/java/com/behl/cachetropolis/service/WizardServiceTest.java)
+* [MasterHouseServiceTest.java](https://github.com/hardikSinghBehl/redis-caching-java-spring-boot/blob/main/src/test/java/com/behl/cachetropolis/service/MasterHouseServiceTest.java)
 
-* Install Java 15
-* Install Maven
-* Install PostgreSQL
-* Install Redis
-
-Recommended way is to use [sdkman](https://sdkman.io/) for installing both maven and java
-
-Create postgres user (superuser) with name and password as bojack
+Tests can be executed with the below command
 
 ```
-CREATE USER bojack WITH PASSWORD 'bojack' SUPERUSER;
-```
-Create Database with name 'bojack' and assign the above created user to the database with preferable CLI or GUI tool
-
-```
-create database bojack;
+mvn test
 ```
 
-```
-grant all privileges on database bojack to bojack;
-```
+---
 
-Start the redis server and specify the port in application.properties file
+### Local Setup Instructions
+Execute the following commands in the project's base directory to launch the necessary containers:  
 
+```bash
+sudo docker-compose build
 ```
-sudo redis-server path-to/redis.conf
+```bash
+sudo docker-compose up -d
 ```
+Docker Compose will start containers for MySQL, Redis, and the Backend Application, all within the same network.
 
-Run the below commands in the core
-
-```
-mvn clean
-```
-
-```
-mvn install
-```
-
-Execute any of the two commands below to run the application
-
-```
-java -jar target/redis-caching-spring-boot-0.0.1-SNAPSHOT.jar
-```
-
-```
-mvn spring-boot:run
-```
-
-The Default port is 9090 (can be changed in application.properties)
-
-Go to the below URI to view Swagger-UI (API-docs)
-
-```
-http://localhost:9090/swagger-ui.html
-```
+Access Swagger UI at `http://localhost:8080/swagger-ui.html`  
