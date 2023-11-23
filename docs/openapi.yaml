@@ -1,0 +1,314 @@
+openapi: 3.0.1
+info:
+  title: Cachetropolis
+  description: Backend application leveraging caching mechanism to reduce datasource
+    trips
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+  description: Local Backend Server
+tags:
+- name: Wizards Management
+  description: Endpoints for managing wizard records
+- name: Houses Registry
+  description: Endpoints for retrieving house information
+- name: Health Check
+  description: Endpoint for performing health checks
+paths:
+  /api/v1/wizards:
+    post:
+      tags:
+      - Wizards Management
+      summary: Creates a wizard record
+      description: Registers a unique wizard record in the system corresponding to
+        the provided information.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WizardCreationRequestDto'
+        required: true
+      responses:
+        "404":
+          description: Invalid HouseId provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseDto'
+        "200":
+          description: Wizard record created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WizardCreationSuccessResponseDto'
+        "400":
+          description: Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseDto'
+  /api/v1/wizards/{wizardId}:
+    get:
+      tags:
+      - Wizards Management
+      summary: Retrieves wizard details
+      description: Retrieves details corresponding to the specified wizard.
+      operationId: retrieve
+      parameters:
+      - name: wizardId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Wizard details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WizardDto'
+        "404":
+          description: Invalid WizardId provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseDto'
+    delete:
+      tags:
+      - Wizards Management
+      summary: Deletes wizard record
+      description: Deletes wizard record corresponding to the specified wizardId.
+      operationId: delete
+      parameters:
+      - name: wizardId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "404":
+          description: Invalid WizardId provided.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseDto'
+        "204":
+          description: Wizard deleted successfully.
+    patch:
+      tags:
+      - Wizards Management
+      summary: Updates wizard details
+      description: Updates details corresponding to the specified wizard.
+      operationId: update
+      parameters:
+      - name: wizardId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WizardUpdationRequestDto'
+        required: true
+      responses:
+        "200":
+          description: Wizard details updated successfully.
+        "400":
+          description: Invalid request payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseDto'
+        "404":
+          description: Invalid WizardId provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseDto'
+  /api/v1/houses:
+    get:
+      tags:
+      - Houses Registry
+      summary: Retrieves all house records
+      description: Retrieves details of all houses.
+      operationId: retrieveAll
+      responses:
+        "200":
+          description: House records retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HouseDto'
+  /api/v1/houses/{houseId}/wizards:
+    get:
+      tags:
+      - Houses Registry
+      summary: Retrieves wizard records by house
+      description: Retrieves wizards corresponding to the specified houseId.
+      operationId: retrieveWizardsByHouse
+      parameters:
+      - name: houseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "404":
+          description: Invalid HouseId provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseDto'
+        "200":
+          description: Wizard records retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WizardDto'
+  /api/v1/health-check/sorting-hat:
+    get:
+      tags:
+      - Health Check
+      summary: Performs house assignment spell
+      description: Performs house assignment spell to randomly assign a house.
+      operationId: performHouseAssignmentSpell
+      responses:
+        "200":
+          description: House assignment spell performed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseDto'
+components:
+  schemas:
+    WizardCreationRequestDto:
+      title: WizardCreationRequest
+      required:
+      - FirstName
+      - Gender
+      - HouseId
+      type: object
+      properties:
+        FirstName:
+          maxLength: 50
+          minLength: 0
+          type: string
+          example: Hardik
+        LastName:
+          maxLength: 50
+          minLength: 0
+          type: string
+          example: Behl
+        Gender:
+          pattern: ^(Male|Female|Other)$
+          type: string
+          example: Male
+        HouseId:
+          type: string
+          format: uuid
+      writeOnly: true
+    ExceptionResponseDto:
+      title: Error
+      type: object
+      properties:
+        Status:
+          type: string
+        Description:
+          type: object
+      readOnly: true
+    WizardCreationSuccessResponseDto:
+      title: WizardCreationSuccessResponse
+      type: object
+      properties:
+        WizardId:
+          type: string
+          format: uuid
+      readOnly: true
+    WizardUpdationRequestDto:
+      title: WizardUpdationRequest
+      type: object
+      properties:
+        LastName:
+          maxLength: 50
+          minLength: 0
+          type: string
+          example: Behl
+        WandType:
+          pattern: ^(Dragon heartstring|Phoenix feather|Unicorn tail hair)$
+          type: string
+          example: Dragon heartstring
+          enum:
+          - Dragon heartstring
+          - Phoenix feather
+          - Unicorn tail hair
+        QuidditchPosition:
+          pattern: ^(Chaser|Beater|Keeper|Seeker)$
+          type: string
+          example: Chaser
+          enum:
+          - Chaser
+          - Beater
+          - Keeper
+          - Seeker
+        BloodStatus:
+          pattern: ^(Muggle|Half blood|Pure Blood|Squib|Half breed)$
+          type: string
+          example: Muggle
+          enum:
+          - Muggle
+          - Half blood
+          - Pure Blood
+          - Squib
+          - Half breed
+        Patronus:
+          maxLength: 20
+          minLength: 0
+          type: string
+          example: Phoenix
+      writeOnly: true
+    WizardDto:
+      title: Wizard
+      type: object
+      properties:
+        Id:
+          type: string
+          format: uuid
+        FirstName:
+          type: string
+        LastName:
+          type: string
+        Gender:
+          type: string
+        WandType:
+          type: string
+        QuidditchPosition:
+          type: string
+        BloodStatus:
+          type: string
+        Patronus:
+          type: string
+        HouseId:
+          type: string
+          format: uuid
+      readOnly: true
+    HouseDto:
+      title: House
+      type: object
+      properties:
+        Id:
+          type: string
+          format: uuid
+        Name:
+          type: string
+      readOnly: true
