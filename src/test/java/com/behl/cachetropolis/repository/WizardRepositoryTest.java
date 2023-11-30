@@ -6,18 +6,17 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.behl.cachetropolis.MySQLDataSourceInitializer;
+import com.behl.cachetropolis.InitializeMysqlContainer;
 import com.behl.cachetropolis.entity.Wizard;
 
 import junit.framework.AssertionFailedError;
 import net.bytebuddy.utility.RandomString;
 
 @DataJpaTest
-@ExtendWith(MySQLDataSourceInitializer.class)
+@InitializeMysqlContainer
 class WizardRepositoryTest {
 
 	@Autowired

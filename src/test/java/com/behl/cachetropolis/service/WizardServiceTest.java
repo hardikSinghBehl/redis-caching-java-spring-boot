@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cache.CacheManager;
 
-import com.behl.cachetropolis.RedisCacheInitializer;
-import com.behl.cachetropolis.MySQLDataSourceInitializer;
+import com.behl.cachetropolis.InitializeMysqlContainer;
+import com.behl.cachetropolis.InitializeRedisContainer;
 import com.behl.cachetropolis.dto.WizardCreationRequestDto;
 import com.behl.cachetropolis.dto.WizardDto;
 import com.behl.cachetropolis.dto.WizardUpdationRequestDto;
@@ -33,7 +32,8 @@ import junit.framework.AssertionFailedError;
 import net.bytebuddy.utility.RandomString;
 
 @SpringBootTest
-@ExtendWith({ MySQLDataSourceInitializer.class, RedisCacheInitializer.class })
+@InitializeMysqlContainer
+@InitializeRedisContainer
 class WizardServiceTest {
 	
 	@Autowired

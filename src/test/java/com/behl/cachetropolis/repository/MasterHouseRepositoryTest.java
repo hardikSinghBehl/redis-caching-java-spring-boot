@@ -8,17 +8,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.behl.cachetropolis.MySQLDataSourceInitializer;
+import com.behl.cachetropolis.InitializeMysqlContainer;
 import com.behl.cachetropolis.entity.MasterHouse;
 
 import junit.framework.AssertionFailedError;
 
 @DataJpaTest
-@ExtendWith(MySQLDataSourceInitializer.class)
+@InitializeMysqlContainer
 class MasterHouseRepositoryTest {
 
 	@Autowired
