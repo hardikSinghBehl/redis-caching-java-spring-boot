@@ -2,6 +2,7 @@ package com.behl.cachetropolis;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.context.annotation.Configuration;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -27,6 +28,7 @@ public class DataSourceExtension implements BeforeAllCallback {
 		System.setProperty("spring.datasource.url", mySQLContainer.getJdbcUrl());
 		System.setProperty("spring.datasource.username", mySQLContainer.getUsername());
 		System.setProperty("spring.datasource.password", mySQLContainer.getPassword());
+		System.setProperty("spring.test.database.replace", Replace.NONE.name());
 	}
 
 }
