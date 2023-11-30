@@ -3,14 +3,12 @@ package com.behl.cachetropolis;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.context.annotation.Configuration;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Configuration
 public class MySQLDataSourceInitializer implements BeforeAllCallback {
 
 	private static final DockerImageName MYSQL_IMAGE = DockerImageName.parse("mysql:8");
