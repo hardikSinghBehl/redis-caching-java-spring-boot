@@ -11,7 +11,7 @@ import net.bytebuddy.utility.RandomString;
 
 @Slf4j
 @Configuration
-public class CacheExtension implements BeforeAllCallback {
+public class RedisCacheInitializer implements BeforeAllCallback {
 
 	private static final int REDIS_PORT = 6379;
 	private static final String REDIS_PASSWORD = RandomString.make(10);

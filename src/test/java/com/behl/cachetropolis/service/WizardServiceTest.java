@@ -18,8 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cache.CacheManager;
 
-import com.behl.cachetropolis.CacheExtension;
-import com.behl.cachetropolis.DataSourceExtension;
+import com.behl.cachetropolis.RedisCacheInitializer;
+import com.behl.cachetropolis.MySQLDataSourceInitializer;
 import com.behl.cachetropolis.dto.WizardCreationRequestDto;
 import com.behl.cachetropolis.dto.WizardDto;
 import com.behl.cachetropolis.dto.WizardUpdationRequestDto;
@@ -33,7 +33,7 @@ import junit.framework.AssertionFailedError;
 import net.bytebuddy.utility.RandomString;
 
 @SpringBootTest
-@ExtendWith({ DataSourceExtension.class, CacheExtension.class })
+@ExtendWith({ MySQLDataSourceInitializer.class, RedisCacheInitializer.class })
 class WizardServiceTest {
 	
 	@Autowired

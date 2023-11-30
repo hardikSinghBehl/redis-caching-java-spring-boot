@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
-public class DataSourceExtension implements BeforeAllCallback {
+public class MySQLDataSourceInitializer implements BeforeAllCallback {
 
 	private static final DockerImageName MYSQL_IMAGE = DockerImageName.parse("mysql:8");
 	private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>(MYSQL_IMAGE);
