@@ -2,7 +2,6 @@ package com.behl.cachetropolis;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.springframework.context.annotation.Configuration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -10,8 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 
 @Slf4j
-@Configuration
-public class CacheExtension implements BeforeAllCallback {
+public class RedisCacheInitializer implements BeforeAllCallback {
 
 	private static final int REDIS_PORT = 6379;
 	private static final String REDIS_PASSWORD = RandomString.make(10);
